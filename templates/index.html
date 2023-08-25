@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Commands</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+        }
+
+        .navbar {
+            background-color: #333;
+            padding: 10px;
+        }
+
+        .navbar h1 {
+            color: #fff;
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .container {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+        }
+
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex;
+        }
+
+        .button {
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #45a049;
+        }
+
+        .message-container {
+            margin-top: 20px;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .message-container.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .message {
+            color: #4CAF50;
+            font-weight: bold;
+            font-size: 18px;
+        }
+    </style>
+    <script>
+        function sendCommand(command) {
+            const messageContainer = document.getElementById('message-container');
+            const messageElement = document.getElementById('message');
+            
+            messageContainer.classList.remove('show');
+
+            // Wait for the animation to finish
+            setTimeout(() => {
+                fetch(`/send-command/${command}`)
+                    .then(response => {
+                        if (response.ok) {
+                            messageElement.textContent = `Command "${command}" sent successfully.`;
+                            messageContainer.classList.add('show');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }, 100);
+        }
+    </script>
+</head>
+<body>
+    <div class="navbar">
+        <h1>Commands</h1>
+    </div>
+    <div class="container">
+        <div class="button-container">
+            {% for command in commands %}
+                <button class="button" onclick="sendCommand('{{ command }}')">{{ command }}</button>
+            {% endfor %}
+        </div>
+        <div id="message-container" class="message-container">
+            <p id="message" class="message"></p>
+        </div>
+    </div>
+</body>
+</html>
